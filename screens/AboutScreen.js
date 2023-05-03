@@ -29,19 +29,18 @@ const AboutScreen = () => {
         <Card.Title>
           Community Partners
         </Card.Title>
-        <Card.Divider>
-          {partners.map((partner) => {
-            return (
-              <ListItem key={partner.id}>
-                <Avatar source={partner.image} rounded />
-                <ListItem.Content>
-                  <ListItem.Title>{partner.name}</ListItem.Title>
-                  <ListItem.Subtitle>{partner.description}</ListItem.Subtitle>
-                </ListItem.Content>
-              </ListItem>
-            )
-          })}
-        </Card.Divider>
+        <Card.Divider />
+        {partners.map((partner) => {
+          return (
+            <ListItem key={partner.id}>
+              <Avatar source={partner.image} rounded />
+              <ListItem.Content>
+                <ListItem.Title>{partner.name}</ListItem.Title>
+                <ListItem.Subtitle>{partner.description}</ListItem.Subtitle>
+              </ListItem.Content>
+            </ListItem>
+          )
+        })}
       </Card>
     </ScrollView>
   )

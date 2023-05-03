@@ -3,7 +3,6 @@ import { Card } from 'react-native-elements';
 
 const ContactScreen = () => {
 
-
   return (
     <ScrollView>
       <Card wrapperStyle={{ margin: 20 }} >
