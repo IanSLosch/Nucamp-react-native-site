@@ -7,6 +7,8 @@ import { Tile } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import Loading from '../components/LoadingComponent';
+import * as Animatable from 'react-native-animatable'
+
 
 const DirectoryScreen = ({ navigation }) => {
   // const [campsites, setCampsites] = useState(CAMPSITES);
@@ -30,15 +32,18 @@ const DirectoryScreen = ({ navigation }) => {
 
   const renderDirectoryItem = ({ item: campsite }) => {
     return (
-      <Tile
-        title={campsite.name}
-        caption={campsite.description}
-        featured
-        onPress={() =>
-          navigation.navigate('CampsiteInfo', { campsite })
-        }
-        imageSrc={{ uri: baseUrl + campsite.image }}
-      />
+      <Animatable.View animation='fadeInRightBig' duration={2000}>
+        <Tile
+          title={campsite.name}
+          caption={campsite.description}
+          featured
+          onPress={() =>
+            navigation.navigate('CampsiteInfo', { campsite })
+          }
+          imageSrc={{ uri: baseUrl + campsite.image }}
+        />
+      </Animatable.View>
+
       // removed in favor of Tile component when switching to redux
       // <ListItem
       //     onPress={() =>
@@ -55,6 +60,7 @@ const DirectoryScreen = ({ navigation }) => {
       // </ListItem>
     );
   };
+  
   return (
     <FlatList
       data={campsites.campsitesArray}
