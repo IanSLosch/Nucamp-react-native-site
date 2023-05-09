@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux"
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Touchable } from "react-native"
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, Alert } from "react-native"
 import { Avatar, ListItem } from "react-native-elements"
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { toggleFavorite } from '../features/favorites/favoritesSlice';
@@ -19,9 +19,26 @@ const FavoritesScreen = ({ navigation }) => {
     return (
       <SwipeRow rightOpenValue={-100}>
         <View style={styles.deleteView}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.deleteTouchable}
-            onPress={() => dispatch((toggleFavorite(campsite.id)))}
+            onPress={() =>
+              Alert.alert(
+                'Delete Favorite?',
+                'Are you sure you want to delete the favorite campsite' + campsite.name + '?',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log(campsite.name + 'not deleted'),
+                    style: 'cancel'
+                  },
+                  {
+                    text: 'OK',
+                    onPress: () => dispatch(toggleFavorite(campsite.id))
+                  }
+                ],
+                {cancelable: false}
+              )
+            }
           >
             <Text style={styles.deleteText}>Delete</Text>
           </TouchableOpacity>
@@ -75,22 +92,22 @@ const FavoritesScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   deleteView: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      flex: 1
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flex: 1
   },
   deleteTouchable: {
-      backgroundColor: 'red',
-      height: '100%',
-      justifyContent: 'center'
+    backgroundColor: 'red',
+    height: '100%',
+    justifyContent: 'center'
   },
   deleteText: {
-      color: 'white',
-      fontWeight: '700',
-      textAlign: 'center',
-      fontSize: 16,
-      width: 100
+    color: 'white',
+    fontWeight: '700',
+    textAlign: 'center',
+    fontSize: 16,
+    width: 100
   }
 });
 export default FavoritesScreen
