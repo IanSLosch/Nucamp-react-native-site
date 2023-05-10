@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Text, View, StyleSheet, PanResponder, Alert } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { baseUrl } from '../../shared/baseUrl';
@@ -6,13 +7,20 @@ import * as Animatable from 'react-native-animatable'
 const RenderCampsite = (props) => {
   const { campsite } = props
 
+  const view = useRef()
+
   const isLeftSwipe = ({ dx }) => dx < -200
   // dx = delta-x. This function will recognize a gesture that is a swipe to the left that is smaller than -200px  
 
   // the below function tracks gesture movements and returns values. based on those values (the gesture) and the condition set 
   // (isLeftSwipe) it creates an alert which allows the user to add the campsite as a favorite
   const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponder: () => true, // this allows the view to respond to touch events by tracking touch and returning an object
+    onPanResponderGrant: () => {
+      view.current
+        .rubberBand(1000)
+        .then((endState) => console.log(endState.finished ? 'finished' : 'canceled'))
+    },
     onPanResponderEnd: (e, gestureState) => {
       console.log('pan responder end', gestureState)
       if (isLeftSwipe(gestureState)) {
@@ -44,6 +52,7 @@ const RenderCampsite = (props) => {
         animation='fadeInDownBig'
         duration={2000}
         delay={1000}
+        ref={view}
         {...panResponder.panHandlers} 
         // this connects the pan handler to the Animatable.View component which wraps around the campsite information card
       >
