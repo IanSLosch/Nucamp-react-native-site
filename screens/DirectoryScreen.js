@@ -24,7 +24,7 @@ const DirectoryScreen = ({ navigation }) => {
   if (campsites.errMess) {
     return (
       <View>
-        <Text>{campsite.errMess}</Text>
+        <Text>{campsites.errMess}</Text>
       </View>
     )
   }

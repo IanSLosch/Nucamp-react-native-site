@@ -9,6 +9,7 @@ const RenderCampsite = (props) => {
 
   const view = useRef()
 
+  const isRightSwipe = ({ dx }) => dx > 200
   const isLeftSwipe = ({ dx }) => dx < -200
   // dx = delta-x. This function will recognize a gesture that is a swipe to the left that is smaller than -200px  
 
@@ -42,6 +43,8 @@ const RenderCampsite = (props) => {
           ],
           { cancelable: false }
         )
+      } else if (isRightSwipe(gestureState)) {
+        props.onShowModal()
       }
     }
   })
