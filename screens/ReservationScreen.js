@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { Text, View, ScrollView, StyleSheet, Switch, Button, Modal, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { useState } from 'react'
+import { Text, View, ScrollView, StyleSheet, Switch, Button, Modal, Alert } from 'react-native'
+import { Picker } from '@react-native-picker/picker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Animatable from 'react-native-animatable'
+import * as Notifications from 'expo-notifications'
+
 
 
 const ReservationScreen = () => {
@@ -14,10 +16,36 @@ const ReservationScreen = () => {
   // const [showModal, setShowModal] = useState(false)
 
   const resetForm = () => {
-    setCampers(1);
-    setHikeIn(false);
-    setDate(new Date());
-    setShowCalendar(false);
+    setCampers(1)
+    setHikeIn(false)
+    setDate(new Date())
+    setShowCalendar(false)
+  }
+
+  const presentLocalNotification = async (reservationDate) => {
+    const sendNotification = () => {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: true
+        })
+      })
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Your Campsite Reservation Search',
+          body: `Search for ${reservationDate} requested`
+        },
+        trigger: null
+      })
+    }
+    let permissions = await Notifications.getPermissionsAsync()
+    if (!permissions.granted) {
+      permissions = await Notifications.requestPermissionsAsync()
+    }
+    if (permissions.granted) {
+      sendNotification()
+    }
   }
 
   const onDateChange = (event, selectedDate) => {
@@ -42,6 +70,10 @@ const ReservationScreen = () => {
             console.log('campers:', campers)
             console.log('hikeIn:', hikeIn)
             console.log('date:', date)
+            presentLocalNotification(
+              date.toLocaleDateString('en-US')
+          )
+      
             resetForm()
           }
         }
@@ -129,8 +161,8 @@ const ReservationScreen = () => {
           </Text>
           <Button
             onPress={() => {
-              setShowModal(!showModal);
-              resetForm();
+              setShowModal(!showModal)
+              resetForm()
             }}
             color='#5637DD'
             title='Close'
@@ -172,6 +204,6 @@ const styles = StyleSheet.create({
   //   fontSize: 18,
   //   margin: 10
   // }
-});
+})
 
 export default ReservationScreen
