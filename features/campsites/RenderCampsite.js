@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Text, View, StyleSheet, PanResponder, Alert } from 'react-native';
+import { Text, View, StyleSheet, PanResponder, Alert, Share } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { baseUrl } from '../../shared/baseUrl';
 import * as Animatable from 'react-native-animatable'
@@ -37,8 +37,8 @@ const RenderCampsite = (props) => {
             {
               text: 'OK',
               onPress: () => props.isFavorite
-              ? console.log('Already set as a favorite')
-              : props.markFavorite()
+                ? console.log('Already set as a favorite')
+                : props.markFavorite()
             }
           ],
           { cancelable: false }
@@ -49,6 +49,19 @@ const RenderCampsite = (props) => {
     }
   })
 
+  const shareCampsite = (title, message, url) => {
+    Share.share(
+      {
+        title: title,
+        message: `${title}: ${message} ${url}`,
+        url
+      },
+      {
+        dialogTitle: 'Share ' + title
+      }
+    )
+  }
+
   if (campsite) {
     return (
       <Animatable.View
@@ -56,8 +69,8 @@ const RenderCampsite = (props) => {
         duration={2000}
         delay={1000}
         ref={view}
-        {...panResponder.panHandlers} 
-        // this connects the pan handler to the Animatable.View component which wraps around the campsite information card
+        {...panResponder.panHandlers}
+      // this connects the pan handler to the Animatable.View component which wraps around the campsite information card
       >
         <Card containerStyle={styles.cardContainer}>
           <Card.Image source={{ uri: baseUrl + campsite.image }}>
@@ -91,6 +104,21 @@ const RenderCampsite = (props) => {
               reverse
               onPress={() => props.onShowModal()}
             />
+            <Icon
+              name='share'
+              type='font-awesome'
+              color='#5637DD'
+              raised
+              reverse
+              onPress={() =>
+                shareCampsite(
+                  campsite.name,
+                  campsite.description,
+                  baseUrl + campsite.image
+                )
+              }
+            />
+
           </View>
         </Card>
       </Animatable.View>
@@ -105,7 +133,7 @@ styles = StyleSheet.create({
     margin: 0,
     marginBottom: 20
   },
-  carRow: {
+  cardRow: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
