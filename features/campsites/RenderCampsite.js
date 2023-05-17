@@ -55,6 +55,7 @@ const RenderCampsite = (props) => {
         title: title,
         message: `${title}: ${message} ${url}`,
         url
+        // shortcut: value not required if key is the same as the value (could do the same thing with title)
       },
       {
         dialogTitle: 'Share ' + title
