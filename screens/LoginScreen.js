@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
-import { StyleSheet, ScrollView, View } from "react-native"
+import { Image, StyleSheet, ScrollView, View } from "react-native"
 import { Button, CheckBox, Icon, Input } from "react-native-elements"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import * as SecureStore from 'expo-secure-store'
+import * as ImagePicker from 'expo-image-picker'
+import { baseUrl } from '../shared/baseUrl'
+import logo from '../assets/images/logo.png'
 
 const LoginTab = ({ navigation }) => {
   const [username, setUsername] = useState('')
@@ -32,9 +35,9 @@ const LoginTab = ({ navigation }) => {
     SecureStore.getItemAsync('userinfo').then((userdata) => {
       const userinfo = JSON.parse(userdata)
       if (userinfo) {
-        setUsername(userinfo.username);
-        setPassword(userinfo.password);
-        setRemember(true);
+        setUsername(userinfo.username)
+        setPassword(userinfo.password)
+        setRemember(true)
       }
     })
   }, [])
@@ -101,12 +104,13 @@ const LoginTab = ({ navigation }) => {
 }
 
 const RegisterTab = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [remember, setRemember] = useState(false);
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [remember, setRemember] = useState(false)
+  const [imageUrl, setImageUrl] = useState(baseUrl + 'images/logo.png')
 
   const handleRegister = () => {
     const userInfo = {
@@ -116,9 +120,9 @@ const RegisterTab = () => {
       lastName,
       email,
       remember
-    };
+    }
 
-    console.log(JSON.stringify(userInfo));
+    console.log(JSON.stringify(userInfo))
 
     if (remember) {
       SecureStore.setItemAsync(
@@ -135,8 +139,34 @@ const RegisterTab = () => {
     }
   }
 
+  // alternative method for creating an async function
+  const getImageFromCamera = async () => {
+    const cameraPermission = await ImagePicker.requestCameraPermissionsAsync()
+
+    if (cameraPermission.status === 'granted') {
+      const capturedImage = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1]
+      })
+
+      if (capturedImage.assets) {
+        console.log(capturedImage.assets[0])
+        setImageUrl(capturedImage.assets[0].uri)
+      }
+    }
+
+  }
+
   return (
     <ScrollView>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: imageUrl }}
+          loadingIndicatorSource={logo}
+          style={styles.image}
+        />
+        <Button title='Camera' onPress={getImageFromCamera} />
+      </View>
       <View style={styles.container} >
         <Input
           placeholder='Username'
@@ -203,10 +233,10 @@ const RegisterTab = () => {
         </View>
       </View>
     </ScrollView>
-  );
-};
+  )
+}
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
 
 const LoginScreen = () => {
   const tabBarOptions = {
@@ -215,7 +245,7 @@ const LoginScreen = () => {
     activeTintColor: '#fff',
     inactiveTintColor: '#808080',
     labelStyle: { fontSize: 16 }
-  };
+  }
 
   return (
     <Tab.Navigator tabBarOptions={tabBarOptions}>
@@ -245,7 +275,7 @@ const LoginScreen = () => {
                 type='font-awesome'
                 color={props.color}
               />
-            );
+            )
           }
         }}
       />
@@ -272,7 +302,19 @@ const styles = StyleSheet.create({
     margin: 20,
     marginRight: 40,
     marginLeft: 40
+  },
+  imageContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    margin: 10
+  },
+  image: {
+    width: 60,
+    height: 60
   }
+
 })
 
 
