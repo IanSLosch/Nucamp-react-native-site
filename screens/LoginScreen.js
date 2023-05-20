@@ -4,6 +4,7 @@ import { Button, CheckBox, Icon, Input } from "react-native-elements"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import * as SecureStore from 'expo-secure-store'
 import * as ImagePicker from 'expo-image-picker'
+import * as ImageManipulator from 'expo-image-manipulator';
 import { baseUrl } from '../shared/baseUrl'
 import logo from '../assets/images/logo.png'
 
@@ -41,6 +42,7 @@ const LoginTab = ({ navigation }) => {
       }
     })
   }, [])
+
 
   return (
     <View style={styles.container} >
@@ -139,6 +141,21 @@ const RegisterTab = () => {
     }
   }
 
+  const getImageFromGallery = async () => {
+    const mediaLibraryPermission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+
+    if (mediaLibraryPermission.status === 'granted') {
+      const capturedImage = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [1, 1]
+      })
+      if (capturedImage.assets) {
+        processImage(capturedImage.assets[0].uri)
+        console.log(capturedImage.assets[0])
+      }
+    }
+  }
+
   // alternative method for creating an async function
   const getImageFromCamera = async () => {
     const cameraPermission = await ImagePicker.requestCameraPermissionsAsync()
@@ -150,11 +167,21 @@ const RegisterTab = () => {
       })
 
       if (capturedImage.assets) {
+        processImage(capturedImage.assets[0].uri)
         console.log(capturedImage.assets[0])
-        setImageUrl(capturedImage.assets[0].uri)
       }
     }
+  }
 
+  const processImage = async (imgUri) => {
+    const processedImage = await ImageManipulator.manipulateAsync(
+      imgUri,
+      [{ resize: { width: 400 } }],
+      { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+    )
+
+    setImageUrl(processedImage.uri)
+    console.log(processedImage)
   }
 
   return (
@@ -166,6 +193,7 @@ const RegisterTab = () => {
           style={styles.image}
         />
         <Button title='Camera' onPress={getImageFromCamera} />
+        <Button title='Gallery' onPress={getImageFromGallery} />
       </View>
       <View style={styles.container} >
         <Input
